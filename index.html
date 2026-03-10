@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>越剧 · 二十华章 | 妆造预约</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: '楷体', '华文楷体', 'Microsoft YaHei', serif;
+        }
+        
+        body {
+            background: #f5efe6;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 20px 30px;
+            background: linear-gradient(145deg, #f0e6d8, #e8d9c4);
+            border-radius: 80px 80px 30px 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(120, 80, 50, 0.15);
+            border: 1px solid #dac29c;
+        }
+        
+        .header h1 {
+            font-size: 3.2rem;
+            color: #4a3729;
+            letter-spacing: 10px;
+            text-shadow: 3px 3px 6px rgba(150, 120, 80, 0.2);
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.3rem;
+            color: #7e6b58;
+            font-style: italic;
+            border-bottom: 2px dashed #b59d7a;
+            display: inline-block;
+            padding-bottom: 12px;
+            padding: 0 30px 12px 30px;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+            max-width: 1400px;
+            margin: 0 auto 40px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 15px 25px -8px rgba(100, 70, 40, 0.25);
+            border: 1px solid #e8d9c4;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 22px 35px -10px #7a5f44;
+            border-color: #c9aa7c;
+        }
+        
+        .card-image {
+            width: 100%;
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            background-color: #ddd2c0;
+        }
+        
+        .card-tag {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(74, 55, 41, 0.85);
+            color: #f5e6d5;
+            padding: 4px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            backdrop-filter: blur(2px);
+            border: 1px solid #b59d7a;
+        }
+        
+        .card-content {
+            padding: 18px 15px 20px;
+            border-top: 1px solid #f0e2d0;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            color: #3f2e22;
+            font-weight: 500;
+            margin-bottom: 6px;
+            border-left: 4px solid #c4a27e;
+            padding-left: 12px;
+        }
+        
+        .card-sub {
+            color: #8e765d;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            font-style: italic;
+            padding-left: 16px;
+        }
+        
+        .card-btn {
+            background: #fff1e4;
+            border: 1px solid #b29173;
+            color: #5d4230;
+            padding: 8px 0;
+            border-radius: 40px;
+            text-align: center;
+            transition: 0.2s;
+            font-size: 1rem;
+        }
+        
+        .card-btn:hover {
+            background: #8e6b4f;
+            color: white;
+            border-color: #8e6b4f;
+        }
+        
+        /* 弹窗表单 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 20, 10, 0.7);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: #fffcf5;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 36px;
+            padding: 35px 30px;
+            box-shadow: 0 25px 40px #2f1e12;
+            border: 2px solid #cbad88;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-content h2 {
+            color: #402f22;
+            font-size: 2rem;
+            border-bottom: 2px dotted #cbad88;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modal-costume {
+            background: #efe4d7;
+            padding: 12px 20px;
+            border-radius: 60px;
+            text-align: center;
+            font-size: 1.3rem;
+            color: #3e2c1c;
+            margin-bottom: 25px;
+            font-weight: bold;
+            border: 1px solid #dac29c;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4f3f31;
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 18px;
+            border: 2px solid #e8d9c4;
+            border-radius: 40px;
+            font-size: 1rem;
+            background: white;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+        
+        .form-group input:focus {
+            border-color: #b59d7a;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(181, 157, 122, 0.2);
+        }
+        
+        .radio-group {
+            display: flex;
+            gap: 25px;
+            background: #f5efe6;
+            padding: 12px 20px;
+            border-radius: 40px;
+            border: 1px solid #e1cfb8;
+        }
+        
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        .radio-group input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #8e6b4f;
+        }
+        
+        .datetime-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .submit-btn {
+            background: #8e6b4f;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 60px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            transition: 0.2s;
+            margin: 25px 0 15px;
+            font-family: inherit;
+            letter-spacing: 2px;
+        }
+        
+        .submit-btn:hover {
+            background: #6b4e38;
+            transform: scale(1.02);
+        }
+        
+        .close-btn {
+            background: #e2cfb8;
+            color: #4a3729;
+            border: none;
+            padding: 12px;
+            border-radius: 60px;
+            font-size: 1.1rem;
+            width: 100%;
+            cursor: pointer;
+            border: 1px solid #b59d7a;
+        }
+        
+        .footer {
+            text-align: center;
+            margin: 50px 0 20px;
+            color: #a28d76;
+            border-top: 1px dashed #cfbba4;
+            padding-top: 25px;
+            font-size: 1rem;
+        }
+        
+        /* 成功弹窗 */
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 20, 10, 0.7);
+            backdrop-filter: blur(4px);
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+        
+        .success-content {
+            background: #fffcf5;
+            width: 90%;
+            max-width: 380px;
+            border-radius: 40px;
+            padding: 40px 30px;
+            text-align: center;
+            border: 3px solid #c9aa7c;
+            box-shadow: 0 20px 30px #2f1e12;
+        }
+        
+        .success-content h3 {
+            font-size: 2.5rem;
+            color: #4a3729;
+            margin-bottom: 20px;
+        }
+        
+        .success-content p {
+            font-size: 1.2rem;
+            color: #6b5843;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+        
+        .success-btn {
+            background: #8e6b4f;
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 60px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            font-family: inherit;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>越 · 二十华章</h1>
+    <p>经典越剧服饰 · 妆造体验预约</p>
+</div>
+
+<!-- 20张卡片网格 -->
+<div class="grid" id="costumeGrid">
+    <!-- 1. 女蟒服·红 -->
+    <div class="card" data-name="女蟒服·红" data-desc="贵妃醉酒·云肩蟒袍">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/bfa58a/ffffff?text=女蟒服·红')">
+            <span class="card-tag">经典</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">女蟒服·红</div>
+            <div class="card-sub">贵妃 · 云肩蟒袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 2. 女蟒服·金 -->
+    <div class="card" data-name="女蟒服·金" data-desc="贵妃醉酒·金线蟒纹">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/cbb094/ffffff?text=女蟒服·金')">
+            <span class="card-tag">经典</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">女蟒服·金</div>
+            <div class="card-sub">贵妃 · 金线蟒纹</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 3. 小生褶子·月白 -->
+    <div class="card" data-name="小生褶子·月白" data-desc="梁祝·文雅书生">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/dbc3a5/ffffff?text=小生褶子·月白')">
+            <span class="card-tag">文生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">小生褶子·月白</div>
+            <div class="card-sub">文生 · 墨竹</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 4. 小生褶子·青 -->
+    <div class="card" data-name="小生褶子·青" data-desc="梁祝·青衫书生">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/c7ad8d/ffffff?text=小生褶子·青')">
+            <span class="card-tag">文生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">小生褶子·青</div>
+            <div class="card-sub">文生 · 青衫</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 5. 花旦宫装·粉 -->
+    <div class="card" data-name="花旦宫装·粉" data-desc="西厢记·俏丽花旦">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/d5b894/ffffff?text=花旦宫装·粉')">
+            <span class="card-tag">花旦</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">花旦宫装·粉</div>
+            <div class="card-sub">闺秀 · 水袖</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 6. 花旦宫装·紫 -->
+    <div class="card" data-name="花旦宫装·紫" data-desc="西厢记·紫衣花旦">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/c6a888/ffffff?text=花旦宫装·紫')">
+            <span class="card-tag">花旦</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">花旦宫装·紫</div>
+            <div class="card-sub">红娘 · 紫衣</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 7. 老生官衣·古铜 -->
+    <div class="card" data-name="老生官衣·古铜" data-desc="胭脂·知府官衣">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/b89b7a/ffffff?text=老生官衣·古铜')">
+            <span class="card-tag">老生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">老生官衣·古铜</div>
+            <div class="card-sub">知府 · 方补</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 8. 老生官衣·蓝 -->
+    <div class="card" data-name="老生官衣·蓝" data-desc="七品县令">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/a6896b/ffffff?text=老生官衣·蓝')">
+            <span class="card-tag">老生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">老生官衣·蓝</div>
+            <div class="card-sub">县令 · 蓝袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 9. 丑角衣·彩 -->
+    <div class="card" data-name="丑角衣·彩" data-desc="葛麻·滑稽丑角">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/dbb68c/ffffff?text=丑角衣·彩')">
+            <span class="card-tag">丑角</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">丑角衣·彩</div>
+            <div class="card-sub">彩旦 · 葛麻</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 10. 小生官衣·红 -->
+    <div class="card" data-name="小生官衣·红" data-desc="状元服·红袍">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/c49a6c/ffffff?text=小生官衣·红')">
+            <span class="card-tag">小生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">小生官衣·红</div>
+            <div class="card-sub">状元 · 红袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 11. 八卦衣 -->
+    <div class="card" data-name="八卦衣" data-desc="诸葛亮·道袍">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/9f8469/ffffff?text=八卦衣')">
+            <span class="card-tag">老生</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">八卦衣</div>
+            <div class="card-sub">诸葛 · 道袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 12. 宫装·黄 -->
+    <div class="card" data-name="宫装·黄" data-desc="皇后·凤袍">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/d6aa7a/ffffff?text=宫装·黄')">
+            <span class="card-tag">皇后</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">宫装·黄</div>
+            <div class="card-sub">皇后 · 凤袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 13. 箭衣·绿 -->
+    <div class="card" data-name="箭衣·绿" data-desc="武将·戎装">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/9e7d5c/ffffff?text=箭衣·绿')">
+            <span class="card-tag">武将</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">箭衣·绿</div>
+            <div class="card-sub">武将 · 戎装</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 14. 箭衣·白 -->
+    <div class="card" data-name="箭衣·白" data-desc="小将·银甲">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/bca98c/ffffff?text=箭衣·白')">
+            <span class="card-tag">武将</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">箭衣·白</div>
+            <div class="card-sub">小将 · 银甲</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 15. 披风·红 -->
+    <div class="card" data-name="披风·红" data-desc="侠女·红披">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/c77f5e/ffffff?text=披风·红')">
+            <span class="card-tag">侠女</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">披风·红</div>
+            <div class="card-sub">侠女 · 红披</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 16. 披风·黑 -->
+    <div class="card" data-name="披风·黑" data-desc="侠客·黑披">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/7f6a54/ffffff?text=披风·黑')">
+            <span class="card-tag">侠客</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">披风·黑</div>
+            <div class="card-sub">侠客 · 黑披</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 17. 道姑衣 -->
+    <div class="card" data-name="道姑衣" data-desc="妙常·道姑">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/a5907a/ffffff?text=道姑衣')">
+            <span class="card-tag">道姑</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">道姑衣</div>
+            <div class="card-sub">妙常 · 道姑</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 18. 僧衣·灰 -->
+    <div class="card" data-name="僧衣·灰" data-desc="和尚·僧袍">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/9e8d78/ffffff?text=僧衣·灰')">
+            <span class="card-tag">僧衣</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">僧衣·灰</div>
+            <div class="card-sub">和尚 · 僧袍</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 19. 书童衣 -->
+    <div class="card" data-name="书童衣" data-desc="四九·书童">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/b7a185/ffffff?text=书童衣')">
+            <span class="card-tag">书童</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">书童衣</div>
+            <div class="card-sub">四九 · 书童</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+    
+    <!-- 20. 旗装·青 -->
+    <div class="card" data-name="旗装·青" data-desc="清宫·旗装">
+        <div class="card-image" style="background-image: url('https://via.placeholder.com/400x300/bc8f63/ffffff?text=旗装·青')">
+            <span class="card-tag">旗装</span>
+        </div>
+        <div class="card-content">
+            <div class="card-title">旗装·青</div>
+            <div class="card-sub">清宫 · 旗装</div>
+            <div class="card-btn">点击预约</div>
+        </div>
+    </div>
+</div>
+
+<!-- 预约表单弹窗 -->
+<div class="modal" id="reserveModal">
+    <div class="modal-content">
+        <h2>🌸 预约体验</h2>
+        <div class="modal-costume" id="selectedCostume">女蟒服·红</div>
+        
+        <form id="bookingForm">
+            <input type="hidden" id="costumeInput">
+            
+            <div class="form-group">
+                <label>是否需要妆造？</label>
+                <div class="radio-group">
+                    <label>
+                        <input type="radio" name="makeup" value="需要妆造" checked> 需要妆造
+                    </label>
+                    <label>
+                        <input type="radio" name="makeup" value="不需要妆造"> 不需要
+                    </label>
+                </div>
+            </div>
+            
+            <div class="datetime-row">
+                <div class="form-group">
+                    <label>预约日期</label>
+                    <input type="date" id="bookingDate" required>
+                </div>
+                <div class="form-group">
+                    <label>预约时间</label>
+                    <input type="time" id="bookingTime" required>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>您的姓名</label>
+                <input type="text" id="userName" placeholder="例如：王丽" required>
+            </div>
+            
+            <div class="form-group">
+                <label>联系电话</label>
+                <input type="tel" id="userPhone" placeholder="139xxxx1234" required>
+            </div>
+            
+            <button type="button" class="submit-btn" id="submitBooking">提交预约</button>
+        </form>
+        
+        <button class="close-btn" id="closeModalBtn">关闭</button>
+    </div>
+</div>
+
+<!-- 预约成功弹窗 -->
+<div class="success-modal" id="successModal">
+    <div class="success-content">
+        <div class="success-icon">🌸</div>
+        <h3>预约成功</h3>
+        <p id="successMessage">感谢您的预约<br>我们会尽快与您联系</p>
+        <button class="success-btn" id="closeSuccessBtn">确定</button>
+    </div>
+</div>
+
+<div class="footer">
+    绍兴·越音袅袅 · 二十套经典服饰 · 妆造可选
+</div>
+
+<script>
+    // 获取元素
+    const modal = document.getElementById('reserveModal');
+    const successModal = document.getElementById('successModal');
+    const selectedCostumeSpan = document.getElementById('selectedCostume');
+    const costumeInput = document.getElementById('costumeInput');
+    const submitBtn = document.getElementById('submitBooking');
+    const closeBtn = document.getElementById('closeModalBtn');
+    const closeSuccessBtn = document.getElementById('closeSuccessBtn');
+    
+    // 获取所有卡片
+    const cards = document.querySelectorAll('.card');
+    
+    // 设置默认日期为今天
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    const defaultDate = `${yyyy}-${mm}-${dd}`;
+    document.getElementById('bookingDate').value = defaultDate;
+    document.getElementById('bookingTime').value = '14:00';
+    
+    // 卡片点击事件
+    cards.forEach(card => {
+        card.addEventListener('click', function(e) {
+            const costumeName = this.dataset.name || '越剧服装';
+            const costumeDesc = this.dataset.desc || '';
+            
+            selectedCostumeSpan.innerText = costumeName + ' · ' + costumeDesc;
+            costumeInput.value = costumeName + ' - ' + costumeDesc;
+            
+            modal.style.display = 'flex';
+        });
+    });
+    
+    // 关闭预约弹窗
+    closeBtn.addEventListener('click', function() {
+        modal.style.display = 'none';
+    });
+    
+    // 点击遮罩层关闭
+    window.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+    
+    // 提交预约
+    submitBtn.addEventListener('click', function() {
+        // 获取表单数据
+        const costume = costumeInput.value;
+        const makeup = document.querySelector('input[name="makeup"]:checked').value;
+        const date = document.getElementById('bookingDate').value;
+        const time = document.getElementById('bookingTime').value;
+        const name = document.getElementById('userName').value;
+        const phone = document.getElementById('userPhone').value;
+        
+        // 验证必填
+        if (!name || !phone || !date || !time) {
+            alert('请填写完整信息');
+            return;
+        }
+        
+        // 关闭预约弹窗
+        modal.style.display = 'none';
+        
+        // 显示成功弹窗
+        document.getElementById('successMessage').innerHTML = 
+            `感谢您的预约<br>${costume}<br>我们会尽快与您联系`;
+        successModal.style.display = 'flex';
+        
+        // 重置表单
+        document.getElementById('userName').value = '';
+        document.getElementById('userPhone').value = '';
+        document.querySelector('input[name="makeup"][value="需要妆造"]').checked = true;
+        document.getElementById('bookingDate').value = defaultDate;
+        document.getElementById('bookingTime').value = '14:00';
+    });
+    
+    // 关闭成功弹窗
+    closeSuccessBtn.addEventListener('click', function() {
+        successModal.style.display = 'none';
+    });
+    
+    window.addEventListener('click', function(e) {
+        if (e.target === successModal) {
+            successModal.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
